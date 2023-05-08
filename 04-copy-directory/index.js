@@ -10,7 +10,7 @@ function addFiles(pathFrom, pathTo) {
     fsPromises.mkdir(pathTo, { recursive: true }).then(() => {           // add new folder
       fs.readdir(pathFrom, (err, files) => {          // Get the list of files and folders
         if (err) throw err;           
-        for (const file of files) {                               // Go by the list of files
+        for (const file of files) {                             // Go by the list of files
           fsPromises.stat(path.join(pathFrom, file))      // Get info about file or folder
             .then((stats) => {
               if (stats.isFile()) {
