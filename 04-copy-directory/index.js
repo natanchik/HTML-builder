@@ -5,7 +5,7 @@ const fs = require('fs');
 const pathFrom = path.join(__dirname, 'files');
 const pathTo = path.join(__dirname, 'files-copy');
 
-function addFiles(pathFrom, pathTo) {                           
+function copyDir(pathFrom, pathTo) {                           
   fsPromises.rm(pathTo, { force: true, recursive: true }).then(() => {    // remove folder
     fsPromises.mkdir(pathTo, { recursive: true }).then(() => {           // add new folder
       fs.readdir(pathFrom, (err, files) => {          // Get the list of files and folders
@@ -29,6 +29,6 @@ function addFiles(pathFrom, pathTo) {
   });
 }
 
-addFiles(pathFrom, pathTo);
+copyDir(pathFrom, pathTo);
 
 // dir -> list of elemetns -> loop with create elements -> if dir
