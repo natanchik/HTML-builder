@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs/promises');
-
 const { stdout } = process;
 
 const files = fs.readdir(path.join(__dirname, 'secret-folder'));
