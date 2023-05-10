@@ -6,27 +6,27 @@ const fs = require('fs');
 
 const componentsPath = path.join(__dirname, 'components');
 const htmlPathTo = path.join(__dirname, 'project-dist');
-const componentsDict = {};
 
-fs.mkdir(htmlPathTo, { recursive: true }, (err) => { if (err) throw err; });
+async function changeHtml(componentsPath, htmlPathTo) {
+  fsPromises.mkdir(htmlPathTo, { recursive: true }).then(() => {
+    fsPromises.readFile(path.join(__dirname, 'template.html')).then((data) => { // read html
+      let newHtml = data.toString();
+      fsPromises.readdir(componentsPath).then((files) => { // get list of components
+        for (const file of files) {    
+          const fileName = path.parse(file);
+          let re = new RegExp('{{' + fileName.name + '}}', 'g');
+          const readComponent = fs.createReadStream(path.join(componentsPath, file));          
+          readComponent.on('data', (data) => {   
+            newHtml = newHtml.replace(re, data.toString());   
+            fs.writeFile(path.join(htmlPathTo, 'index.html'), newHtml, (err) => { if (err) throw err; });         
+          });
+        }
+      });      
+    });
+  });
+}
 
-fs.readdir(componentsPath, (err, files) => { // Get the list of files and folders
-  if (err) throw err;
-  for (const file of files) {
-    const fileName = path.parse(file);
-    const readComponent = fs.createReadStream(path.join(componentsPath, file));
-    readComponent.on('data', (data) => componentsDict[fileName.name] = data);
-  }
-});
-
-fs.readFile(path.join(__dirname, 'template.html'), (err, data) => {
-  if (err) throw err;
-  const newHtml = data.toString()
-    .replace(/{{header}}/g, componentsDict.header)
-    .replace(/{{articles}}/g, componentsDict.articles)
-    .replace(/{{footer}}/g, componentsDict.footer);
-  fs.writeFile(path.join(htmlPathTo, 'index.html'), newHtml, (err) => { if (err) throw err; });
-});
+changeHtml(componentsPath, htmlPathTo)
 
 // Assets block
 
